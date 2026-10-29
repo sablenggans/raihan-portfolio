@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:,">
+<title>Raihan Abdillah Isnandi – Web Developer Portfolio</title>
+<meta name="description" content="Portfolio of Raihan Abdillah Isnandi, Informatics Engineering graduate and web developer based in Purwokerto, Central Java.">
+<meta property="og:title" content="Raihan Abdillah Isnandi – Web Developer">
+<meta property="og:description" content="Informatics Engineering graduate focused on web development, software engineering and data processing.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="logo" href="#home" data-go="home">Raihan Abdillah Isnandi</a>
+<nav id="menu" class="links" aria-label="Main"></nav>
+<div style="display:flex;gap:8px"><button class="ibtn" id="theme" aria-label="Switch to dark mode"></button>
+<button class="ibtn burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button></div>
+</div></header>
+
+<main id="main">
+<div id="v-home">
+<section id="home"><div class="wrap hero">
+<div><p class="hi ld" style="animation-delay:.05s">Hello, I’m</p>
+<h1 class="ld" style="animation-delay:.12s">Raihan Abdillah Isnandi</h1>
+<p class="role ld" style="animation-delay:.22s">Informatics Engineering Graduate | Web Developer</p>
+<p class="intro ld" style="animation-delay:.3s">I am an Informatics Engineering graduate with experience in website development, academic software projects, and administrative services. I am interested in web development, software engineering, and data processing. I enjoy learning new technologies, solving problems, and building useful digital solutions.</p>
+<div class="cta ld" style="animation-delay:.4s"><a class="btn pri" href="#projects" data-go="projects">View Projects</a><a class="btn" id="cv" href="#">Download CV</a></div>
+<div class="soc ld" style="animation-delay:.5s" id="soc"></div></div>
+<div class="photo ld" style="animation-delay:.3s" role="img" aria-label="Profile photo"><img src="public/images/profile.jpg" alt="Profile photo: Raihan Abdillah Isnandi"></div>
+</div></section>
+
+<section id="about"><div class="wrap">
+<h2 class="rv">About</h2><p class="sub rv">Web development, software development, and data processing.</p>
+<div class="about"><div class="rv"><p>I am a Bachelor of Informatics Engineering graduate from Universitas Muhammadiyah Purwokerto, based in Purwokerto, Central Java.</p>
+<p>I am drawn to web development, software development, and data processing. I work well on my own projects, adapt quickly, and like learning new tools.</p>
+<p>My experience covers both technical work, such as building websites, and non-technical work, such as public service administration and running a service business.</p></div>
+<dl class="facts rv" style="margin:0"><div class="card"><dt>Degree</dt><dd>S.Kom., Informatics Engineering</dd></div><div class="card"><dt>University</dt><dd>Universitas Muhammadiyah Purwokerto</dd></div><div class="card"><dt>GPA</dt><dd>3.1 / 4.00</dd></div><div class="card"><dt>Studied</dt><dd>March 2020 – September 2025</dd></div></dl></div>
+</div></section>
+
+<section id="experience"><div class="wrap">
+<h2 class="rv">Experience</h2><p class="sub rv">Employment, business, freelance, and project work, labeled by type.</p>
+<ol class="tl" id="exp"></ol>
+</div></section>
+
+<section id="projects"><div class="wrap">
+<h2 class="rv">Projects</h2><p class="sub rv">Screenshots and links will appear here once they are supplied.</p>
+<div class="grid" id="proj"></div>
+</div></section>
+
+<section id="skills"><div class="wrap">
+<h2 class="rv">Skills</h2><p class="sub rv">Technologies I have listed on my CV.</p>
+<div class="skg" id="sk"></div>
+</div></section>
+
+<section id="contact"><div class="wrap">
+<h2 class="rv">Contact</h2><p class="sub rv">Open to Web Developer and Full-stack Developer roles.</p>
+<div class="cg"><div class="rv"><ul class="cl">
+<li><b>Name</b>Raihan Abdillah Isnandi</li><li><b>Location</b>Purwokerto, Central Java</li>
+<li><b>Email</b><a href="mailto:alfi.faroh@gmail.com">alfi.faroh@gmail.com</a></li>
+<li><b>LinkedIn</b><a href="https://www.linkedin.com/in/raihan-abdillah-isnandi-773b93389" target="_blank" rel="noopener">raihan-abdillah-isnandi</a></li>
+<li><b>GitHub</b><a href="https://github.com/sablenggans" target="_blank" rel="noopener">sablenggans</a></li></ul></div>
+<form id="form" class="card rv" novalidate>
+<label for="n">Name</label><input id="n" autocomplete="name"><div class="err" id="en"></div>
+<label for="e">Email</label><input id="e" type="email" autocomplete="email"><div class="err" id="ee"></div>
+<label for="m">Message</label><textarea id="m"></textarea><div class="err" id="em"></div>
+<button class="btn pri" type="submit">Open in email app</button>
+<p class="status" id="st" role="status">This form has no server. Sending opens your email app with the message filled in.</p></form></div>
+</div></section>
+</div>
+
+<div id="v-cert" hidden><section><div class="wrap">
+<a class="back" href="#home" data-go="home">← Back to home</a>
+<h2>Certificates &amp; Achievements</h2><p class="sub">Professional certifications and credentials supporting my career journey.</p>
+<div class="grid" id="certs"></div>
+</div></section></div>
+</main>
+
+<footer><div class="wrap">© <span id="yr"></span> Raihan Abdillah Isnandi. Built with plain HTML, CSS and JavaScript.</div></footer>
+<dialog id="dlg" aria-labelledby="dt"><button class="btn x" id="dx" aria-label="Close">Close</button><div id="db"></div></dialog>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

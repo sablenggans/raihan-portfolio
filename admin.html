@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>Admin Dashboard - Raihan Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./admin.css">
+  <style>
+    /* =====================================================
+       CSS Variables - adapted from src/styles.css
+       ===================================================== */
+    :root {
+      --bg:#f8f9fb; --surface:#fff; --ink:#0b1f3a; --mute:#4a5b73;
+      --line:#dde3ec; --acc:#0e8f94; --acc-ink:#0a6f73;
+      --acc-soft:#e3f5f5; --sh:0 1px 2px rgba(11,31,58,.06),0 8px 24px rgba(11,31,58,.06);
+      --bg-dark:#0a1424; --surface-dark:#101e33; --ink-dark:#e8eef7;
+      --mute-dark:#9db0c9; --line-dark:#22344f; --acc-dark:#3cc9cf;
+      --acc-soft-dark:#10303a;
+    }
+    [data-theme="dark"] {
+      --bg:#0a1424; --surface:#101e33; --ink:#e8eef7; --mute:#9db0c9;
+      --line:#22344f; --acc:#3cc9cf; --acc-ink:#5fd8dc;
+      --acc-soft:#10303a; --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;transition:background .3s,color .3s;overflow-x:hidden}
+    a{color:inherit}
+    :focus-visible{outline:3px solid var(--acc);outline-offset:3px;border-radius:6px}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+    /* =====================================================
+       Auth Page / Login
+       ===================================================== */
+    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .auth-card{max-width:420px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:var(--sh)}
+    .auth-card h2{margin:0 0 24px;text-align:center;font-size:1.8rem;color:var(--ink)}
+    .auth-card p{margin:0 0 20px;text-align:center;color:var(--mute);font-size:.94rem}
+    .form-group{margin:0 0 20px}
+    .form-group label{display:block;margin:0 0 8px;font-weight:600;font-size:.9rem}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:4px}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--acc)}
+    .form-group .err{color:#c0392b;font-size:.84rem;margin-top:4px}
+    .btn-primary{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;min-height:44px;border-radius:10px;font-weight:600;font-size:.95rem;text-decoration:none;border:1px solid var(--line);background:var(--ink);color:var(--bg);cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--acc)}
+    .btn-primary:active{transform:none}
+    .btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;min-height:44px;border-radius:10px;font-weight:600;font-size:.95rem;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:transform .2s,border-color .2s}
+    .btn-secondary:hover{transform:translateY(-2px);border-color:var(--acc)}
+    .btn-danger{padding:12px 20px;border-radius:10px;border:1px solid #e74c3c;background:#fff;color:#c0392b;font-weight:600;font-size:.95rem;cursor:pointer;transition:background .2s}
+    .btn-danger:hover{background:#fdf2f2}
+    .logo{font-weight:700;text-decoration:none;letter-spacing:-.02em;font-size:1.2rem}
+    .links{display:flex;gap:4px;align-items:center;margin:20px 0 0}
+    .links a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--mute);font-size:.94rem;font-weight:500;position:relative;transition:color .2s}
+    .links a:hover,.links a.on{color:var(--ink)}
+    .links a.on::after{content:"";position:absolute;left:12px;right:12px;bottom:2px;height:2px;background:var(--acc);border-radius:2px}
+    /* =====================================================
+       Dashboard Layout
+       ===================================================== */
+    .dashboard{display:none;min-height:100vh}
+    .dashboard.active{display:block}
+    .topbar{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 20px;border-bottom:1px solid var(--line)}
+    .topbar .logo{font-weight:700;letter-spacing:-.02em}
+    .topbar .user{display:flex;align-items:center;gap:12px}
+    .topbar .user img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+    .topbar .user span{font-weight:600}
+    .sidebar{position:fixed;top:64px;left:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--line);padding:24px 0;overflow-y:auto}
+    .sidebar h3{margin:0 0 24px;font-size:1.1rem;color:var(--ink);padding:0 20px}
+    .nav-link{display:block;padding:12px 20px;margin:4px 20px;border-radius:10px;text-decoration:none;color:var(--mute);font-size:.94rem;transition:background .2s,color .2s}
+    .nav-link:hover,.nav-link.active{background:var(--acc-soft);color:var(--acc)}
+    .nav-link.active{color:var(--acc-ink)}
+    .main-content{margin-left:260px;padding:40px 24px}
+    .section{display:none}
+    .section.active{display:block}
+    .section h1{margin:0 0 24px;font-size:1.8rem;color:var(--ink)}
+    .section-status{margin:0 0 20px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--acc-soft);color:var(--ink);font-size:.9rem;line-height:1.5}
+    .section-status.error{border-color:#c0392b;background:#fdf2f2;color:#a93226}
+    [data-theme="dark"] .section-status.error{background:#3a1f20;color:#ffb4a8}
+    .form-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--sh);margin:0 0 24px}
+    .form-card h2{margin:0 0 20px;font-size:1.4rem;color:var(--ink)}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 16px}
+    .field-row .half{display:flex;flex-direction:column}
+    .field-row .full{grid-column:1/-1}
+    .field-row label{margin:0 0 6px;font-weight:600;font-size:.9rem}
+    .field-row input,.field-row textarea,.field-row select{padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+    .field-row textarea{min-height:120px;resize:vertical}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
+    .chip{padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-size:.88rem;font-weight:500}
+    .tag{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--acc-soft);color:var(--acc-ink);font-size:.78rem;font-weight:600;margin:2px}
+    .tag.n{background:transparent;border:1px dashed var(--line);color:var(--mute)}
+    .preview{margin:16px 0;padding:12px;border:2px dashed var(--line);border-radius:10px;background:var(--acc-soft);text-align:center;color:var(--mute);min-height:80px}
+    .preview-img{max-width:100%;height:auto;border-radius:8px;background:#fff}
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:var(--sh);display:none;z-index:1000;min-width:300px}
+    .toast.success{border-color:var(--acc)}
+    .toast.error{border-color:#c0392b;color:#c0392b}
+    .toast.show{display:block;animation:slideIn .3s ease}
+    @keyframes slideIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+    .spinner{width:20px;height:20px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--mute)}
+    .empty-state svg{width:64px;height:64px;margin:0 auto 12px;filter:opacity(.5)}
+    /* =====================================================
+       Form elements specific
+       ===================================================== */
+    .img-upload{border:2px dashed var(--line);border-radius:10px;padding:16px;text-align:center;color:var(--mute);cursor:pointer;transition:border-color .2s}
+    .img-upload:hover{border-color:var(--acc)}
+    .img-preview{max-width:100%;height:auto;border-radius:8px;margin-top:12px}
+    .file-name{margin:8px 0 0;font-size:.88rem;color:var(--acc)}
+    .file-name.error{color:#c0392b}
+    /* =====================================================
+       Table for listing items
+       ===================================================== */
+    .table-wrapper{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.88rem}
+    th{padding:12px 8px;border-bottom:1px solid var(--line);text-align:left;color:var(--mute);font-weight:600}
+    td{padding:10px 8px;border-bottom:1px solid var(--line)}
+    tr{background:var(--surface);transition:background .15s}
+    tr:hover{background:var(--acc-soft)}
+    .action-btn{padding:6px 10px;border-radius:6px;font-size:.81rem; border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:background .2s}
+    .action-btn:hover{background:var(--acc-soft)}
+    .action-btn.delete:hover{border-color:#e74c3c;color:#e74c3c}
+    /* =====================================================
+       Reduced motion
+       ===================================================== */
+    @media (max-width:820px){
+      .sidebar{position:static;width:auto;bottom:auto;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
+      .sidebar h3{display:none}
+      .sidebar nav{display:flex;gap:4px}
+      .nav-link{white-space:nowrap;margin:0;padding:9px 14px}
+      .main-content{margin-left:0;padding:24px 16px}
+    }
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <!-- Auth Page -->
+  <div id="authPage" class="auth-page">
+    <div class="auth-card">
+      <a href="#" class="logo">Admin Dashboard</a>
+      <h2>Login Admin</h2>
+      <p>Masuk dengan kredensial admin untuk mengelola website</p>
+      <div id="authNotice" class="auth-notice" role="status" aria-live="polite" hidden></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" required autocomplete="email">
+          <div class="err" id="loginErr">Email wajib diisi.</div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" required>
+          <div class="err" id="loginPwdErr">Password wajib diisi.</div>
+        </div>
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+      <p class="auth-help">
+      Akun admin dikelola melalui dashboard Supabase. Tidak ada pendaftaran publik.</p>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="dashboard">
+    <!-- Topbar -->
+    <header class="topbar">
+      <a href="#" class="logo">Raihan Abdillah Isnandi</a>
+      <div class="user">
+        <span id="userName">Admin</span>
+        <button class="btn-secondary" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Menu</h3>
+      <nav>
+        <a href="#homeSettings" class="nav-link active" data-section="homeSettings">Home Settings</a>
+        <a href="#cv" class="nav-link" data-section="cv">CV / Resume</a>
+        <a href="#experience" class="nav-link" data-section="experience">Experience</a>
+        <a href="#projects" class="nav-link" data-section="projects">Projects</a>
+        <a href="#certificates" class="nav-link" data-section="certificates">Certificates</a>
+        <a href="#skills" class="nav-link" data-section="skills">Skills</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <!-- Home Settings Section -->
+      <section id="homeSettings" class="section active">
+        <h1>Home Settings</h1>
+        <div class="form-card">
+          <h2>Foto Profil</h2>
+          <div class="img-upload" id="profileImageUpload">
+            <span>Unggah Foto</span>
+            <input type="file" id="profileImageInput" accept="image/*">
+            <img class="preview-img" id="profileImagePreview" src="" alt="Preview">
+          </div>
+          <div class="preview" id="profileImagePreviewBox">
+            <img id="profileImagePreviewContent" src="" alt="Current profile photo">
+          </div>
+          <small class="file-name" id="profileImageFileName">Belum ada foto</small>
+
+          <h2 style="margin:32px 0 12px;">Informasi Profil</h2>
+          <div class="field-row">
+            <div class="half">
+              <label>Nama Lengkap</label>
+              <input type="text" id="siteFullName" placeholder="Nama lengkap">
+            </div>
+            <div class="half">
+              <label>Headline</label>
+              <input type="text" id="siteHeadline" placeholder="Headline">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Intro</label>
+              <textarea id="siteIntro" rows="3" placeholder="Intro singkat..."></textarea>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Lokasi</label>
+              <input type="text" id="siteLocation" placeholder="Lokasi">
+            </div>
+            <div class="half">
+              <label>Email</label>
+              <input type="email" id="siteEmail" placeholder="email">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>GitHub</label>
+              <input type="text" id="siteGitHub" placeholder="URL GitHub">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>LinkedIn</label>
+              <input type="text" id="siteLinkedIn" placeholder="URL LinkedIn">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h2>Tombol CTA & Sosial</h2>
+          <div class="field-row">
+            <div class="full">
+              <label>Label Tombol CTA (Home)</label>
+              <input type="text" id="ctaBtnLabel" value="View Projects">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>GitHub (Sosial)</label>
+              <input type="text" id="socialGitHub" value="https://github.com/sablenggans">
+            </div>
+            <div class="half">
+              <label>LinkedIn (Sosial)</label>
+              <input type="text" id="socialLinkedIn" value="https://www.linkedin.com/in/raihan-abdillah-isnandi-773b93389">
+            </div>
+          </div>
+          <small class="mt-2 block" style="font-size:.88rem;color:var(--mute)">Perubahan akan langsung tercermin pada website publik setelah disimpan.</small>
+          <button class="btn-primary" id="saveHomeBtn" type="button">Simpan Home Settings</button>
+        </div>
+      </section>
+
+      <!-- CV / Resume Section -->
+      <section id="cv" class="section">
+        <h1>CV / Resume</h1>
+        <div class="form-card">
+          <h2>Unggah CV Baru (PDF)</h2>
+          <div class="img-upload" id="cvUpload">
+            <span>Pilih File PDF</span>
+            <input type="file" id="cvFileInput" accept=".pdf">
+            <div class="file-name" id="cvFileName">Belum ada file</div>
+          </div>
+          <div class="preview" style="min-height:60px;">
+            <span id="cvFileInfo">CV belum ditambahkan</span>
+          </div>
+
+          <h2 style="margin:32px 0 12px;">CV Aktif</h2>
+          <p style="margin:0 0 16px;color:var(--mute)">Pilih CV yang akan ditampilkan dan bisa diunduh pengunjung:</p>
+          <select id="activeCvSelect" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin:4px 0">
+            <option value="">-- Pilih CV Aktif --</option>
+          </select>
+
+          <button class="btn-danger" id="deleteCvBtn" style="width:100%;margin:16px 0 0;display:none">Hapus CV</button>
+        </div>
+
+        <div class="form-card">
+          <h2>Daftar CV Tersimpan</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Nama File</th><th>Diupload</th><th>Aktif</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="cvList">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experience Section -->
+      <section id="experience" class="section">
+        <h1>Experience</h1>
+        <div class="form-card">
+          <h2>Tambah Pengalaman Kerja</h2>
+          <div class="field-row">
+            <div class="full">
+              <label>Jabatan / Posisi</label>
+              <input type="text" id="expTitle" placeholder="Contoh: Web Developer">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Perusahaan / Organisasi</label>
+              <input type="text" id="expCompany" placeholder="Contoh: Department of Population">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Tanggal (Mulai)</label>
+              <input type="text" id="expPeriodStart" placeholder="Contoh: November 2025">
+            </div>
+            <div class="half">
+              <label>Sampai</label>
+              <input type="text" id="expPeriodEnd" placeholder="Sampai (opsional)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Jenis</label>
+              <select id="expType" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit">
+                <option value="Employment">Employment</option>
+                <option value="Internship">Internship</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Business">Business</option>
+                <option value="Project">Project</option>
+              </select>
+            </div>
+            <div class="half">
+              <label>Status Publik</label>
+              <select id="expIsPublic" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit">
+                <option value="true"> Publik</option>
+                <option value="false"> Draft</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Deskripsi</label>
+              <textarea id="expDescription" rows="3" placeholder="Deskripsi tanggung jawab..."></textarea>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Urutan Tampilan</label>
+              <input type="number" id="expSortOrder" min="0" value="0">
+            </div>
+          </div>
+          <button class="btn-primary" id="addExperienceBtn">Simpan Pengalaman</button>
+        </div>
+
+        <div class="form-card">
+          <h2>Daftar Pengalaman</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Jabatan</th><th>Perusahaan</th><th>Tipe</th><th>Periode</th><th>Public</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="expList">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section id="projects" class="section">
+        <h1>Projects</h1>
+        <div class="form-card">
+          <h2>Tambah Proyek</h2>
+          <div class="field-row">
+            <div class="full">
+              <label>Judul Proyek</label>
+              <input type="text" id="projTitle" placeholder="Contoh: School Profile Website">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Deskripsi</label>
+              <textarea id="projDesc" rows="3" placeholder="Deskripsi proyek..."></textarea>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Gambar Thumbnail</label>
+              <div class="img-upload" id="projImageUpload">
+                <span>Unggah Gambar</span>
+                <input type="file" id="projImageInput" accept="image/*">
+                <img class="preview-img" id="projImagePreview" src="" alt="Preview">
+              </div>
+              <div class="preview" id="projImagePreviewBox">
+                <img id="projImagePreviewContent" src="" alt="Current thumbnail">
+              </div>
+              <small class="file-name" id="projImageFileName">Belum ada gambar</small>
+            </div>
+            <div class="half">
+              <label>Teknologi</label>
+              <input type="text" id="projTech" placeholder="Contoh: Next.js, React.js, HTML, CSS">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Tautan Demo</label>
+              <input type="text" id="projDemo" placeholder="https://...">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Repository GitHub</label>
+              <input type="text" id="projRepo" placeholder="https://github.com/...">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Jabatan Saya</label>
+              <input type="text" id="projRole" placeholder="Contoh: Developer">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Urutan Tampilan</label>
+              <input type="number" id="projSortOrder" min="0" value="0">
+            </div>
+          </div>
+          <button class="btn-primary" id="addProjectBtn">Simpan Proyek</button>
+        </div>
+
+        <div class="form-card">
+          <h2>Daftar Proyek</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Judul</th><th>Teknologi</th><th>Demo</th><th>Public</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="projList">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Certificates Section -->
+      <section id="certificates" class="section">
+        <h1>Certificates</h1>
+        <div class="form-card">
+          <h2>Tambah Sertifikat</h2>
+          <div class="field-row">
+            <div class="full">
+              <label>Nama Sertifikat</label>
+              <input type="text" id="certTitle" placeholder="Contoh: Certificate of Competence: Programmer">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Penerbit</label>
+              <input type="text" id="certIssuer" placeholder="Contoh: BNSP">
+            </div>
+            <div class="half">
+              <label>Tanggal Terbit</label>
+              <input type="date" id="certDate">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Gambar Sertifikat</label>
+              <div class="img-upload" id="certImageUpload">
+                <span>Unggah Gambar</span>
+                <input type="file" id="certImageInput" accept="image/*">
+                <img class="preview-img" id="certImagePreview" src="" alt="Preview">
+              </div>
+              <div class="preview" id="certImagePreviewBox">
+                <img id="certImagePreviewContent" src="" alt="Current certificate image">
+              </div>
+              <small class="file-name" id="certImageFileName">Belum ada gambar</small>
+            </div>
+            <div class="half">
+              <label>Tautan Verifikasi</label>
+              <input type="text" id="certVerification" placeholder="https://...">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Urutan Tampilan</label>
+              <input type="number" id="certSortOrder" min="0" value="0">
+            </div>
+          </div>
+          <button class="btn-primary" id="addCertificateBtn">Simpan Sertifikat</button>
+        </div>
+
+        <div class="form-card">
+          <h2>Daftar Sertifikat</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Nama</th><th>Penerbit</th><th>Tanggal</th><th>Verify</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="certList">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section id="skills" class="section">
+        <h1>Skills</h1>
+        <div class="form-card">
+          <h2>Tambah Skill</h2>
+          <div class="field-row">
+            <div class="full">
+              <label>Nama Skill</label>
+              <input type="text" id="skillName" placeholder="Contoh: JavaScript">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="half">
+              <label>Kategori</label>
+              <input type="text" id="skillCategory" placeholder="Contoh: Programming languages">
+            </div>
+            <div class="half">
+              <label>Ikon (opsional)</label>
+              <input type="file" id="skillIconInput" accept="image/*">
+              <div class="img-upload" style="width:100%;padding:8px;margin-top:4px">
+                <span>Preview</span>
+                <img id="skillIconPreview" src="" alt="Skill icon" style="max-width:80px;height:auto;">
+              </div>
+              <small class="file-name" style="display:block;margin:4px 0 0;">Belum ada ikon</small>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="full">
+              <label>Urutan Tampilan</label>
+              <input type="number" id="skillSortOrder" min="0" value="0">
+            </div>
+          </div>
+          <button class="btn-primary" id="addSkillBtn">Simpan Skill</button>
+        </div>
+
+        <div class="form-card">
+          <h2>Daftar Skill</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Nama</th><th>Kategori</th><th>Ikon</th><th>Urutan</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="skillList">
+                <!-- Dinamis -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
